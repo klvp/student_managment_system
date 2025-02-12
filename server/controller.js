@@ -83,7 +83,7 @@ module.exports.addStudent = async (req, res) => {
 module.exports.getStudents = async (req, res) => {
     try {
         const { query: { search = null } = {} } = req
-        let filter = search ? (isNaN(search) ? { name: search.toLowerCase() } : { class: parseInt(search) }) : {}
+        let filter = search ? (isNaN(search) ? { name: { $regex: search, $options: 'i' } } : { class: parseInt(search) }) : {}
         let allStudents = await Student.find({
             ...filter
         })
