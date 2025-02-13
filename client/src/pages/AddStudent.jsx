@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { config } from "../../config";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useLoggedIn from "@/hooks/useLoggedIn";
 import { getCookie } from "@/lib/helper";
 
@@ -73,6 +73,8 @@ function AddStudent() {
     email: "",
     phone: "",
   };
+  const [error, setError] = useState(null);
+  const [color, setColor] = useState("pink");
   const { studentId } = useParams();
 
   const form = useForm({
@@ -113,9 +115,29 @@ function AddStudent() {
         }
       );
       if (response.ok && studentId) {
-        window.location.href = "/dashboard";
+        setError(`Student Updted`);
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 2000);
+      } else if (response.status === 500) {
+        let errorMessage = await response.json();
+        setError(
+          `Duplicate ${
+            Object.keys(errorMessage?.error?.errorResponse?.keyPattern)[0]
+          }`
+        );
+        setColor("red");
+        setTimeout(() => {
+          setError(null);
+          setColor("green");
+        }, 2000);
+      } else {
+        form.reset(initialValues);
+        setError(`Student Added`);
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       }
-      form.reset(initialValues);
     } catch (error) {
       form.reset(initialValues);
       console.error("Form submission error", error);
@@ -289,6 +311,7 @@ function AddStudent() {
           <Button type="submit">{studentId ? "Update" : "Submit"}</Button>
         </form>
       </Form>
+      {error && <p className={`text-center text-${color}-500`}>{error}</p>}
     </div>
   );
 }
