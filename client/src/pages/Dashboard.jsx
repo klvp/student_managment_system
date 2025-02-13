@@ -119,6 +119,7 @@ function Dashboard() {
               <TableHead>Class</TableHead>
               <TableHead>Section</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>Age</TableHead>
               <TableHead>Edit</TableHead>
               <TableHead>Delete</TableHead>
@@ -132,6 +133,7 @@ function Dashboard() {
                   <TableCell>{student.class}</TableCell>
                   <TableCell>{student.section}</TableCell>
                   <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.phone}</TableCell>
                   <TableCell>{student.age}</TableCell>
                   <TableCell>
                     <Link
