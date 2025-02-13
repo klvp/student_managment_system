@@ -1,7 +1,11 @@
 import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 const Login = lazy(() => import("./pages/Login"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AddStudent = lazy(() => import("./pages/AddStudent"));
@@ -48,6 +52,10 @@ const router = createBrowserRouter([
         <EditStudent />
       </Suspense>
     ),
+  },
+  {
+    path: "/",
+    element: <Navigate to="/login" />,
   },
 ]);
 
