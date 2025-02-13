@@ -30,6 +30,7 @@ import { getCookie } from "@/lib/helper";
 
 function Dashboard() {
   const form = useForm({});
+  const { watch } = form;
   const [currentPage, setCurrentPage] = useState(1);
 
   function onSubmit(values) {
@@ -104,6 +105,13 @@ function Dashboard() {
       setCurrentPage(currentPage - 1);
     }
   };
+  const handleClearFilter = () => {
+    dispatch(getStudents());
+    form.reset();
+  };
+
+  const searchValue = watch("search");
+
   return (
     <div className="max-w-[70vw] mx-auto">
       <p className="text-2xl text-center">Student Management System</p>
@@ -129,8 +137,15 @@ function Dashboard() {
               </FormItem>
             )}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <Button type="submit">Submit</Button>
+            <Button
+              type="button"
+              onClick={handleClearFilter}
+              disabled={!searchValue}
+            >
+              Clear Filter
+            </Button>
           </div>
         </form>
       </Form>
