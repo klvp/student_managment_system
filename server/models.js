@@ -25,7 +25,7 @@ const studentSchema = new mongoose.Schema({
         unique: true,
         required: true,
         trim: true,
-        lowercase: true,
+        uppercase: true,
         minLength: 3,
         maxLength: 50,
     },
@@ -50,6 +50,10 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true,
         lowercase: true,
+    },
+    phone: {
+        type: String,
+        required: true,
     },
 }, { timestamps: true })
 

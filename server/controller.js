@@ -59,7 +59,7 @@ module.exports.userLogin = async (req, res) => {
 
 module.exports.addStudent = async (req, res) => {
     try {
-        const { body: { name, age, section, email, standard } = {} } = req
+        const { body: { name, age, section, email, standard, phone } = {} } = req
         let student = await Student.findOne({ name, email, class: standard, section })
         if (student) {
             return res.status(403).send({ status: false, message: "User already exist" })
@@ -70,6 +70,7 @@ module.exports.addStudent = async (req, res) => {
             class: standard,
             section,
             email,
+            phone
         })
         const result = await newUser.save()
         return res.status(200).send({ message: "student added", data: result._id })

@@ -6,7 +6,7 @@ const ApiRoutes = require("./routes.js")
 const app = express()
 app.use(express.json())
 app.use(cors({
-    origin: ["http://localhost:5173", "https://klvp-book-review.netlify.app"], // Frontend origin
+    origin: ["http://localhost:5173"], // Frontend origin
     credentials: true, // Allow credentials (cookies, etc.)
 }))
 
