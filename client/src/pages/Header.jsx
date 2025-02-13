@@ -15,7 +15,7 @@ const Header = () => {
     window.location.href = "/login";
   };
   return (
-    <header className="fixed top-0 left-0 w-5/5 bg-gray-800 text-white p-4">
+    <header className="fixed top-0 left-0 w-5/5 bg-gray-800 text-white p-4 z-[10]">
       <nav className="container mx-auto flex justify-between">
         <Link to="/dashboard" className="text-lg font-bold">
           Dashboard

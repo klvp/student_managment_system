@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudents } from "../store/studentSlicer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { config } from "../../config";
@@ -30,6 +30,7 @@ import { getCookie } from "@/lib/helper";
 
 function Dashboard() {
   const form = useForm({});
+  const [currentPage, setCurrentPage] = useState(1);
 
   function onSubmit(values) {
     try {
@@ -80,6 +81,29 @@ function Dashboard() {
   if (status === "error") {
     return <p>Something Went Wrong..</p>;
   }
+
+  // let currentPage = 1;
+  const studentsPerPage = 5;
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = students.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+
+  const totalPages = Math.ceil(students.length / studentsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   return (
     <div className="max-w-[70vw] mx-auto">
       <p className="text-2xl text-center">Student Management System</p>
@@ -111,23 +135,23 @@ function Dashboard() {
         </form>
       </Form>
       {students.length ? (
-        <Table>
-          <TableCaption>Student Management System</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[200px]">Name</TableHead>
-              <TableHead>Class</TableHead>
-              <TableHead>Section</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Age</TableHead>
-              <TableHead>Edit</TableHead>
-              <TableHead>Delete</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {students.length &&
-              students?.map((student) => (
+        <>
+          <Table>
+            <TableCaption>Student Management System</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px]">Name</TableHead>
+                <TableHead>Class</TableHead>
+                <TableHead>Section</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Edit</TableHead>
+                <TableHead>Delete</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentStudents.map((student) => (
                 <TableRow key={student._id}>
                   <TableCell className="font-medium">{student.name}</TableCell>
                   <TableCell>{student.class}</TableCell>
@@ -153,8 +177,20 @@ function Dashboard() {
                   </TableCell>
                 </TableRow>
               ))}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+          <div className="flex justify-between mt-4">
+            <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Previous
+            </Button>
+            <Button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </>
       ) : (
         <p className="text-red-500 text-center">
           No Students are Recorded <br /> Add Student
