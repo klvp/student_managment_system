@@ -14,7 +14,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { config } from "../../config";
 import { useEffect, useState } from "react";
-import { deleteCookie, getCookie } from "@/lib/helper";
+import { deleteCookie, getCookie, setCookie } from "@/lib/helper";
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
@@ -51,7 +51,9 @@ function Login() {
         body: JSON.stringify(values),
         credentials: "include",
       });
-      if (getCookie("token") && loginResponse.ok) {
+      if (loginResponse.ok) {
+        let data = await loginResponse.json();
+        setCookie("token", data.token);
         window.location.href = "/dashboard";
       } else {
         setMessage("Email or Password is Invalid");
