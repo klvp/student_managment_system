@@ -61,6 +61,10 @@ function Login() {
       }
     } catch (error) {
       form.reset(initialValues);
+      setMessage(error.message);
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
       console.error("Form submission error", error);
     }
   }
