@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { config } from "../../config"
+import { getCookie } from "@/lib/helper"
 const initialState = {
     data: [],
     status: "idle"
@@ -29,7 +30,15 @@ export default studentSlicer.reducer
 export const getStudents = createAsyncThunk("students/get", async (search = null) => {
     console.log("🚀 ~ getStudents ~ search:", search)
     try {
-        const response = await fetch(`${config.apiBaseUrl}/students${search ? `?search=${search}` : ""}`);
+        const response = await fetch(`${config.apiBaseUrl}/students${search ? `?search=${search}` : ""}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-auth-token": getCookie("token")
+                },
+            }
+        );
         let data = await response.json();
         console.log("🚀 ~ getStudents ~ data:", data)
         return data.data

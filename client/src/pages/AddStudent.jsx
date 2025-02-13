@@ -31,6 +31,7 @@ import { config } from "../../config";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import useLoggedIn from "@/hooks/useLoggedIn";
+import { getCookie } from "@/lib/helper";
 
 const schema = yup.object().shape({
   name: yup.string().min(3).max(100).required(),
@@ -81,9 +82,16 @@ function AddStudent() {
   useLoggedIn();
   useEffect(() => {
     if (studentId) {
-      fetch(`${config.apiBaseUrl}/students/${studentId}`)
+      fetch(`${config.apiBaseUrl}/students/${studentId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": getCookie("token"),
+        },
+      })
         .then((res) => res.json())
         .then((data) => {
+          console.log("🚀 ~ .then ~ data:", data);
           form.reset({ ...data.data, standard: data.data.class });
         })
         .catch((err) => console.error(err));
@@ -99,6 +107,7 @@ function AddStudent() {
           method: studentId ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-auth-token": getCookie("token"),
           },
           body: JSON.stringify(values),
         }

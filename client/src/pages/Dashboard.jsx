@@ -26,6 +26,7 @@ import { Trash2, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { config } from "../../config";
 import useLoggedIn from "@/hooks/useLoggedIn";
+import { getCookie } from "@/lib/helper";
 
 function Dashboard() {
   const form = useForm({});
@@ -52,6 +53,7 @@ function Dashboard() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "x-auth-token": getCookie("token"),
         },
       })
         .then(() => {
@@ -108,48 +110,54 @@ function Dashboard() {
           </div>
         </form>
       </Form>
-      <Table>
-        <TableCaption>Student Management System</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
-            <TableHead>Class</TableHead>
-            <TableHead>Section</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Age</TableHead>
-            <TableHead>Edit</TableHead>
-            <TableHead>Delete</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {students.length &&
-            students?.map((student) => (
-              <TableRow key={student._id}>
-                <TableCell className="font-medium">{student.name}</TableCell>
-                <TableCell>{student.class}</TableCell>
-                <TableCell>{student.section}</TableCell>
-                <TableCell>{student.email}</TableCell>
-                <TableCell>{student.age}</TableCell>
-                <TableCell>
-                  <Link
-                    to={`/add/${student._id}`}
-                    className="bg-white text-black hover:bg-white"
-                  >
-                    <Pencil />
-                  </Link>
-                </TableCell>
-                <TableCell className="">
-                  <Button
-                    onClick={() => handleDelete(student._id)}
-                    className="bg-white text-black hover:bg-white"
-                  >
-                    <Trash2 />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+      {students.length ? (
+        <Table>
+          <TableCaption>Student Management System</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Name</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>Section</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Age</TableHead>
+              <TableHead>Edit</TableHead>
+              <TableHead>Delete</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {students.length &&
+              students?.map((student) => (
+                <TableRow key={student._id}>
+                  <TableCell className="font-medium">{student.name}</TableCell>
+                  <TableCell>{student.class}</TableCell>
+                  <TableCell>{student.section}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.age}</TableCell>
+                  <TableCell>
+                    <Link
+                      to={`/add/${student._id}`}
+                      className="bg-white text-black hover:bg-white"
+                    >
+                      <Pencil />
+                    </Link>
+                  </TableCell>
+                  <TableCell className="">
+                    <Button
+                      onClick={() => handleDelete(student._id)}
+                      className="bg-white text-black hover:bg-white"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p className="text-red-500 text-center">
+          No Students are Recorded <br /> Add Student
+        </p>
+      )}
     </div>
   );
 }
