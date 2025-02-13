@@ -118,7 +118,7 @@ module.exports.updateStudentById = async (req, res) => {
     try {
         const {
             params: { studentId },
-            body: { name, age, section, email, standard }
+            body: { name, age, section, email, standard, phone }
         } = req
         let studentDetails = await Student.findById(studentId)
         if (!studentDetails) {
@@ -127,7 +127,7 @@ module.exports.updateStudentById = async (req, res) => {
         await Student.findByIdAndUpdate(
             studentId,
             {
-                $set: { name, age, section, email, class: standard }
+                $set: { name, age, section, email, class: standard, phone }
             }
         )
         return res.status(200).send({ status: "success", message: "student updated" })
