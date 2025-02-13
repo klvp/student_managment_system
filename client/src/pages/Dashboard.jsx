@@ -138,7 +138,7 @@ function Dashboard() {
             )}
           />
           <div className="flex justify-center gap-4">
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Apply Filter</Button>
             <Button
               type="button"
               onClick={handleClearFilter}
