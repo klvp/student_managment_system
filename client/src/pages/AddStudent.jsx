@@ -30,6 +30,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { config } from "../../config";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import useLoggedIn from "@/hooks/useLoggedIn";
 
 const schema = yup.object().shape({
   name: yup.string().min(3).max(100).required(),
@@ -40,8 +41,12 @@ const schema = yup.object().shape({
     .required()
     .typeError("class must be between 1 to 10"),
   section: yup.string().oneOf(["A", "B", "C"]).required(),
-  age: yup.number().min(1).max(100).required(),
+  age: yup.number().min(1).max(100).required().positive().integer(),
   email: yup.string().email().required(),
+  phone: yup
+    .string()
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    .required(),
 });
 
 function AddStudent() {
@@ -65,6 +70,7 @@ function AddStudent() {
     section: "",
     age: "",
     email: "",
+    phone: "",
   };
   const { studentId } = useParams();
 
@@ -72,6 +78,7 @@ function AddStudent() {
     resolver: yupResolver(schema),
     defaultValues: initialValues,
   });
+  useLoggedIn();
   useEffect(() => {
     if (studentId) {
       fetch(`${config.apiBaseUrl}/students/${studentId}`)
@@ -86,7 +93,7 @@ function AddStudent() {
   async function onSubmit(values) {
     try {
       console.log(values);
-      await fetch(
+      let response = await fetch(
         `${config.apiBaseUrl}/students${studentId ? `/${studentId}` : ""}`,
         {
           method: studentId ? "PUT" : "POST",
@@ -96,6 +103,9 @@ function AddStudent() {
           body: JSON.stringify(values),
         }
       );
+      if (response.ok && studentId) {
+        window.location.href = "/dashboard";
+      }
       form.reset(initialValues);
     } catch (error) {
       form.reset(initialValues);
@@ -232,20 +242,41 @@ function AddStudent() {
             </div>
           </div>
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="email" {...field} />
-                </FormControl>
-                <FormDescription>Enter Email</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-12 gap-4">
+            <div className="md:col-span-6 col-span-12">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="" type="email" {...field} />
+                    </FormControl>
+                    <FormDescription>Enter Email</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="md:col-span-6 col-span-12">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="" type="text" {...field} />
+                    </FormControl>
+                    <FormDescription>Enter Phone Number</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
           <Button type="submit">{studentId ? "Update" : "Submit"}</Button>
         </form>
       </Form>

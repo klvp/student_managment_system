@@ -25,6 +25,7 @@ import { useEffect } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { config } from "../../config";
+import useLoggedIn from "@/hooks/useLoggedIn";
 
 function Dashboard() {
   const form = useForm({});
@@ -65,7 +66,7 @@ function Dashboard() {
   }
   const dispatch = useDispatch();
   const { data: students, status } = useSelector((state) => state.students);
-
+  useLoggedIn();
   useEffect(() => {
     dispatch(getStudents());
   }, []);
