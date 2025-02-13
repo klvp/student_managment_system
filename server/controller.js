@@ -87,7 +87,7 @@ module.exports.getStudents = async (req, res) => {
         let filter = search ? (isNaN(search) ? { name: { $regex: search, $options: 'i' } } : { class: parseInt(search) }) : {}
         let allStudents = await Student.find({
             ...filter
-        })
+        }).sort({ class: 1, name: 1 })
         if (!allStudents.length) {
             return res.status(404).send({ status: "success", data: [] })
         }

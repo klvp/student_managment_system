@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
 const studentSchema = new mongoose.Schema({
     name: {
         type: String,
-        unique: true,
         required: true,
         trim: true,
         uppercase: true,
