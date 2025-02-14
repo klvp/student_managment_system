@@ -17,3 +17,12 @@ export function deleteCookie(key) {
 export function setCookie(key, value) {
     sessionStorage.setItem(key, value);
 }
+
+export function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}

@@ -21,27 +21,27 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudents } from "../store/studentSlicer";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { config } from "../../config";
 import useLoggedIn from "@/hooks/useLoggedIn";
-import { getCookie } from "@/lib/helper";
+import { debounce, getCookie } from "@/lib/helper";
 
 function Dashboard() {
   const form = useForm({});
   const { watch } = form;
   const [currentPage, setCurrentPage] = useState(1);
 
-  function onSubmit(values) {
-    try {
-      console.log(values);
-      dispatch(getStudents(values?.search));
-      form.reset();
-    } catch (error) {
-      console.error("Form submission error", error);
-    }
-  }
+  // function onSubmit(values) {
+  //   try {
+  //     console.log(values);
+  //     dispatch(getStudents(values?.search));
+  //     form.reset();
+  //   } catch (error) {
+  //     console.error("Form submission error", error);
+  //   }
+  // }
   async function handleDelete(id) {
     try {
       console.log(id);
@@ -74,7 +74,25 @@ function Dashboard() {
   useEffect(() => {
     dispatch(getStudents());
   }, []);
-
+  const onSubmit = useCallback(
+    debounce((values) => {
+      try {
+        console.log(values);
+        dispatch(getStudents(values?.search));
+        form.reset();
+      } catch (error) {
+        console.error("Form submission error", error);
+      }
+    }, 300),
+    []
+  );
+  const handleClearFilter = useCallback(
+    debounce(() => {
+      dispatch(getStudents());
+      form.reset();
+    }, 300),
+    []
+  );
   if (status === "loading") {
     return <p>Loading..</p>;
   }
@@ -105,12 +123,12 @@ function Dashboard() {
       setCurrentPage(currentPage - 1);
     }
   };
-  const handleClearFilter = () => {
-    dispatch(getStudents());
-    form.reset();
-  };
+  // const handleClearFilter = () => {
+  //   dispatch(getStudents());
+  //   form.reset();
+  // };
 
-  const searchValue = watch("search");
+  // const searchValue = watch("search");
 
   return (
     <div className="max-w-[70vw] mx-auto">
@@ -142,7 +160,7 @@ function Dashboard() {
             <Button
               type="button"
               onClick={handleClearFilter}
-              disabled={!searchValue}
+              // disabled={!searchValue}
             >
               Clear Filter
             </Button>
