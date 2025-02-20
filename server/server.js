@@ -2,6 +2,10 @@ const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
 const ApiRoutes = require("./routes.js")
+const postgresRoutes = require("./postgresRoutes.js")
+const pool = require("./db.postgres.connection.js")
+const { errorHandling } = require("./middleware.js")
+const { createUserTable, createStudentTable } = require("./data/createTables.js")
 
 const app = express()
 app.use(express.json())
@@ -11,10 +15,13 @@ app.use(cors({
 }))
 
 let PORT = process.env.PORT || 5000
-require("./db.connection.js")
+// require("./db.connection.js")
+createStudentTable()
+createUserTable()
 
 app.get("/", async (req, res) => {
-    return res.status(200).send("Hello I am node express server 🚀")
+    const result = await pool.query("SELECT current_database()")
+    return res.status(200).send(`Hello I am node express server 🚀 ${result.rows[0].current_database}`)
 })
 
 app.get("/healthcheck", async (req, res) => {
@@ -31,6 +38,11 @@ app.get("/healthcheck", async (req, res) => {
     }
 })
 
-app.use("/api", ApiRoutes)
+app.use("/api/postgres", postgresRoutes)
+// app.use("/api", ApiRoutes)
+
+// Error Handling
+app.use(errorHandling)
+
 
 app.listen(PORT, () => console.log(`server started on port ${PORT}`))
